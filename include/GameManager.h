@@ -6,9 +6,11 @@
 
 enum GameState {
     MENU,
+    LEVEL_SELECT,
+    SETTINGS,
     LEVEL_1,
-    LEVEL_1_COMPLETE,
     LEVEL_2,
+    LEVEL_1_COMPLETE,
     LEVEL_2_COMPLETE,
     GAME_OVER
 };
@@ -39,6 +41,7 @@ public:
     void update(bool keys[]);
     void draw();
     void shoot();
+    void handleMenuInput(unsigned char key);
 
     // Helper drawing functions
     void drawText(float x, float y, const char* text);

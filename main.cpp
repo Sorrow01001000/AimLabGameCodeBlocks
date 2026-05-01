@@ -1,92 +1,95 @@
 #include <GL/freeglut.h>
-#include <cstdlib>
-#include <ctime>
 #include "GameManager.h"
+#include <string>
 
+// Our global game object
 GameManager game;
-bool keys[256];
 
-// --- NEW: Cheat Code Tracker ---
-char recentKeys[5] = "    "; // Stores 4 blank spaces to start
+// Array to keep track of which keys are being held down (for W, A, S, D movement)
+bool keys[256] = { false };
 
-void reshape(int w, int h) {
-    if (h == 0) h = 1;
-    float ratio = (float)w / h;
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0, ratio, 0.1, 100.0);
-    glMatrixMode(GL_MODELVIEW);
+// Variables to track the "boom" cheat code
+std::string cheatBuffer = "";
+
+// --------------------------------------------------------
+// THIS IS THE FUNCTION WE NEEDED TO UPDATE
+// --------------------------------------------------------
+void keyboard(unsigned char key, int x, int y) {
+    // 1. Mark the key as pressed down (for movement)
+    keys[key] = true;
+
+    // 2. SEND THE KEY TO OUR NEW MENU SYSTEM!
+    game.handleMenuInput(key);
+
+    // 3. The "boom" cheat code logic
+    cheatBuffer += key;
+    if (cheatBuffer.length() > 4) {
+        cheatBuffer.erase(0, 1); // Keep only the last 4 letters typed
+    }
+    if (cheatBuffer == "boom") {
+        game.cheatActivated = true;
+    }
+}
+// --------------------------------------------------------
+
+void keyboardUp(unsigned char key, int x, int y) {
+    // Mark the key as released (so the player stops moving)
+    keys[key] = false;
+}
+
+void mouse(int button, int state, int x, int y) {
+    // If we are actually playing a level and we left-click, shoot!
+    if ((game.currentState == LEVEL_1 || game.currentState == LEVEL_2) &&
+         button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        game.shoot();
+    }
 }
 
 void display() {
+    // This tells the GameManager to draw whatever screen we are currently on
     game.draw();
     glutSwapBuffers();
 }
 
 void update(int value) {
+    // This runs 60 times a second to update the game logic
     game.update(keys);
+
     glutPostRedisplay();
-    glutTimerFunc(16, update, 0);
+    glutTimerFunc(16, update, 0); // 16 milliseconds = ~60 frames per second
 }
 
-void keyboardDown(unsigned char key, int x, int y) {
-    keys[key] = true;
+void reshape(int w, int h) {
+    if (h == 0) h = 1; // Prevent a divide-by-zero error
+    float ratio = w * 1.0f / h;
 
-    // --- NEW: Track the keys for the cheat! ---
-    recentKeys[0] = recentKeys[1];
-    recentKeys[1] = recentKeys[2];
-    recentKeys[2] = recentKeys[3];
-    recentKeys[3] = key;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glViewport(0, 0, w, h);
 
-    if (recentKeys[0] == 'b' && recentKeys[1] == 'o' && recentKeys[2] == 'o' && recentKeys[3] == 'm') {
-        game.cheatActivated = true; // Tell the game manager to start the party
-    }
+    // Set the 3D camera perspective
+    gluPerspective(45.0f, ratio, 0.1f, 100.0f);
 
-    if (key == 27) {
-        exit(0);
-    }
-
-    if (game.currentState == MENU && key == 13) {
-        game.initLevel1();
-        game.currentState = LEVEL_1;
-    }
-    else if (game.currentState == LEVEL_1_COMPLETE && key == 13) {
-        game.score = 0;
-        game.timeLeft = 30.0f;
-        game.initLevel2();
-        game.currentState = LEVEL_2;
-    }
-}
-
-void keyboardUp(unsigned char key, int x, int y) {
-    keys[key] = false;
-}
-
-void mouse(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        if (game.currentState == LEVEL_1 || game.currentState == LEVEL_2) {
-            game.shoot();
-        }
-    }
+    glMatrixMode(GL_MODELVIEW);
 }
 
 int main(int argc, char** argv) {
-    srand(static_cast<unsigned int>(time(0)));
-
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("Academic Aim Trainer");
+    glutCreateWindow("Beam of Madness");
 
+    // Enable 3D depth testing
     glEnable(GL_DEPTH_TEST);
 
+    // Register all our input and draw functions
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboardDown);
+    glutKeyboardFunc(keyboard);
     glutKeyboardUpFunc(keyboardUp);
     glutMouseFunc(mouse);
 
+    // Start the game loop
     glutTimerFunc(16, update, 0);
 
     glutMainLoop();

@@ -2,7 +2,11 @@
 #include <GL/freeglut.h>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib> // <-- NEW: Added so rand() works for the disco colors!
+#include <cstdlib>
+#include <windows.h>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
 
 GameManager::GameManager() {
     currentState = MENU;
@@ -10,7 +14,67 @@ GameManager::GameManager() {
     timeLeft = 30.0f;
     isShooting = false;
     beamTimer = 0;
-    cheatActivated = false; // <-- Start with cheat off
+    cheatActivated = false;
+}
+
+void GameManager::handleMenuInput(unsigned char key) {
+    if (key == 27) {
+    if (currentState == LEVEL_1 || currentState == LEVEL_2) {
+            // If you are playing, go back to the menu and stop the music!
+            currentState = MENU;
+            mciSendString("stop boomMusic", NULL, 0, NULL);
+        }
+        else if (currentState == MENU) {
+            // If you are ALREADY on the Main Menu, close the game
+            exit(0);
+        }
+        else {
+            // If you are in Settings, Level Select, or Game Over, ESC takes you back to Menu
+            currentState = MENU;
+        }
+        return; // We did what we needed, skip the rest of the function!
+    }
+
+    if (currentState == MENU) {
+        if (key == '1') currentState = LEVEL_SELECT;
+        if (key == '2') currentState = SETTINGS;
+        if (key == '3') exit(0); // Closes the game entirely
+    }
+    else if (currentState == LEVEL_SELECT) {
+        if (key == '1') {
+            score = 0;
+            timeLeft = 30.0f;
+            initLevel1();
+            currentState = LEVEL_1;
+        }
+        if (key == '2') {
+            score = 0;
+            timeLeft = 30.0f;
+            initLevel2();
+            currentState = LEVEL_2;
+        }
+        if (key == '3' || key == 'b' || key == 'B') {
+            currentState = MENU;
+        }
+    }
+    else if (currentState == SETTINGS) {
+        if (key == 'b' || key == 'B') {
+            currentState = MENU;
+        }
+    }
+    else if (currentState == LEVEL_1_COMPLETE) {
+        if (key == 13) {
+            score=0;
+            timeLeft = 30.0f;
+            initLevel2();
+            currentState = LEVEL_2;
+        }
+    }
+    else if (currentState == GAME_OVER || currentState == LEVEL_2_COMPLETE) {
+        if (key == 13 || key == 'b' || key == 'B') {
+            currentState = MENU;
+        }
+    }
 }
 
 void GameManager::initLevel1() {
@@ -40,28 +104,44 @@ void GameManager::update(bool keys[]) {
         timeLeft -= 16.0f / 1000.0f;
         if (timeLeft <= 0.0f) {
             currentState = GAME_OVER;
+            mciSendString("stop boomMusic", NULL, 0, NULL); // Stop music on game over
         }
 
-        // --- Win Conditions ---
         if (currentState == LEVEL_1 && score >= 100) {
             currentState = LEVEL_1_COMPLETE;
+            mciSendString("stop boomMusic", NULL, 0, NULL);
         }
         else if (currentState == LEVEL_2 && score >= 100) {
             currentState = LEVEL_2_COMPLETE;
+            mciSendString("stop boomMusic", NULL, 0, NULL);
         }
 
-        // --- NEW: Cheat Code Explosion ---
         if (cheatActivated) {
+            static bool musicStarted = false;
+            if (!musicStarted) {
+                // Bulletproof MCI load sequence
+                mciSendString("stop boomMusic", NULL, 0, NULL);
+                mciSendString("close boomMusic", NULL, 0, NULL);
+
+                // If "ayay.wav" fails again, replace it with your full C:\\ path here!
+                mciSendString("open \"ayay.wav\" alias boomMusic wait", NULL, 0, NULL);
+                mciSendString("play boomMusic repeat", NULL, 0, NULL);
+
+                musicStarted = true;
+            }
+
             for (int i = 0; i < MAX_TARGETS; i++) {
-                targets[i].y += 0.5f; // Fly up!
-                targets[i].x += (rand() % 10 - 5) * 0.1f; // Scatter X
-                targets[i].z += (rand() % 10 - 5) * 0.1f; // Scatter Z
+                targets[i].y += 0.5f;
+                targets[i].x += (rand() % 10 - 5) * 0.1f;
+                targets[i].z += (rand() % 10 - 5) * 0.1f;
             }
         }
     }
 }
 
 void GameManager::shoot() {
+    PlaySound(TEXT("boxing_bell.wav"), NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
     float rad = player.rotation * (3.14159f / 180.0f);
     float dirX = sin(rad);
     float dirZ = cos(rad);
@@ -133,7 +213,6 @@ void GameManager::drawText(float x, float y, const char* text) {
 }
 
 void GameManager::drawGround() {
-    // --- NEW: Disco Floor ---
     if (cheatActivated) {
         float r = (rand() % 100) / 100.0f;
         float g = (rand() % 100) / 100.0f;
@@ -152,16 +231,41 @@ void GameManager::drawGround() {
 }
 
 void GameManager::draw() {
+    int w = glutGet(GLUT_WINDOW_WIDTH);
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
+
     if (currentState == MENU) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
 
-        int w = glutGet(GLUT_WINDOW_WIDTH);
-        int h = glutGet(GLUT_WINDOW_HEIGHT);
+        drawText(w / 2.0f - 90.0f, h / 2.0f + 60.0f, "BEAM OF MADNESS");
+        drawText(w / 2.0f - 60.0f, h / 2.0f + 10.0f, "1. Start Game");
+        drawText(w / 2.0f - 60.0f, h / 2.0f - 20.0f, "2. Settings & Rules");
+        drawText(w / 2.0f - 60.0f, h / 2.0f - 50.0f, "3. Exit Game");
+    }
+    else if (currentState == LEVEL_SELECT) {
+        glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();
 
-        drawText(w / 2.0f - 100.0f, h / 2.0f + 20.0f, "ACADEMIC AIM TRAINER");
-        drawText(w / 2.0f - 80.0f, h / 2.0f - 20.0f, "Press ENTER to Start");
+        drawText(w / 2.0f - 70.0f, h / 2.0f + 60.0f, "SELECT LEVEL");
+        drawText(w / 2.0f - 60.0f, h / 2.0f + 10.0f, "1. Level 1 (Easy)");
+        drawText(w / 2.0f - 60.0f, h / 2.0f - 20.0f, "2. Level 2 (Hard)");
+        drawText(w / 2.0f - 60.0f, h / 2.0f - 50.0f, "3. Back to Menu");
+    }
+    else if (currentState == SETTINGS) {
+        glClearColor(0.2f, 0.1f, 0.2f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();
+
+        drawText(w / 2.0f - 70.0f, h / 2.0f + 80.0f, "HOW TO PLAY:");
+        drawText(w / 2.0f - 120.0f, h / 2.0f + 40.0f, "- Use W, A, S, D to move.");
+        drawText(w / 2.0f - 120.0f, h / 2.0f + 10.0f, "- Mouse aim, Left Click to shoot.");
+        drawText(w / 2.0f - 120.0f, h / 2.0f - 20.0f, "- Destroy all targets before time runs out!");
+        drawText(w / 2.0f - 120.0f, h / 2.0f - 50.0f, "- Secret: Type 'boom' for MADNESS MODE.");
+
+        drawText(w / 2.0f - 70.0f, h / 2.0f - 100.0f, "Press B to go Back");
     }
     else if (currentState == LEVEL_1 || currentState == LEVEL_2) {
         glClearColor(0.5f, 0.8f, 0.9f, 1.0f);
@@ -180,9 +284,7 @@ void GameManager::draw() {
         gluLookAt(camX, camY, camZ, lookX, player.y, lookZ, 0.0f, 1.0f, 0.0f);
 
         drawGround();
-
         for (int i = 0; i < MAX_TARGETS; i++) targets[i].draw();
-
         player.draw();
 
         if (isShooting) {
@@ -203,10 +305,6 @@ void GameManager::draw() {
         glClearColor(0.2f, 0.6f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-
-        int w = glutGet(GLUT_WINDOW_WIDTH);
-        int h = glutGet(GLUT_WINDOW_HEIGHT);
-
         drawText(w / 2.0f - 80.0f, h / 2.0f + 20.0f, "LEVEL 1 COMPLETE!");
         drawText(w / 2.0f - 110.0f, h / 2.0f - 20.0f, "Press ENTER to Start Level 2");
     }
@@ -214,10 +312,6 @@ void GameManager::draw() {
         glClearColor(0.8f, 0.6f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-
-        int w = glutGet(GLUT_WINDOW_WIDTH);
-        int h = glutGet(GLUT_WINDOW_HEIGHT);
-
         drawText(w / 2.0f - 100.0f, h / 2.0f + 20.0f, "YOU BEAT LEVEL 2!");
         drawText(w / 2.0f - 100.0f, h / 2.0f - 20.0f, "Press ESC to Exit");
     }
@@ -225,13 +319,8 @@ void GameManager::draw() {
         glClearColor(0.8f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-
-        int w = glutGet(GLUT_WINDOW_WIDTH);
-        int h = glutGet(GLUT_WINDOW_HEIGHT);
-
         char finalScoreText[50];
         snprintf(finalScoreText, sizeof(finalScoreText), "FINAL SCORE: %d", score);
-
         drawText(w / 2.0f - 50.0f, h / 2.0f + 20.0f, "TIME'S UP!");
         drawText(w / 2.0f - 70.0f, h / 2.0f - 20.0f, finalScoreText);
     }

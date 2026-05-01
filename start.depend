@@ -1,9 +1,8 @@
 # depslib dependency file v1.0
-1777502270 source:c:\users\omar3\documents\sections graphics\start\main.cpp
+1777650376 source:c:\users\omar3\documents\sections graphics\start\main.cpp
 	<GL/freeglut.h>
-	<cstdlib>
-	<ctime>
 	"GameManager.h"
+	<string>
 
 1777492274 c:\program files\codeblocks\mingw\include\gl\glut.h
 	"freeglut_std.h"
@@ -41,14 +40,16 @@
 
 1777500245 c:\users\omar3\documents\sections graphics\start\include\target.h
 
-1777502271 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
+1777650220 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
 	"Player.h"
 	"Target.h"
 
-1777502270 source:c:\users\omar3\documents\sections graphics\start\src\gamemanager.cpp
+1777650823 source:c:\users\omar3\documents\sections graphics\start\src\gamemanager.cpp
 	"GameManager.h"
 	<GL/freeglut.h>
 	<cmath>
 	<cstdio>
 	<cstdlib>
+	<windows.h>
+	<mmsystem.h>
 
