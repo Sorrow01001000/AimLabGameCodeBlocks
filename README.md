@@ -100,7 +100,11 @@ A fast-paced 3D aim trainer built with **C++ and OpenGL (FreeGLUT)**, featuring 
 
 ## 👾 Screenshots
 
-> *(Add your screenshots here!)*
+<img width="997" height="781" alt="image" src="https://github.com/user-attachments/assets/234b1b25-b2c7-4b25-aafc-0987204e9b97" />
+<img width="999" height="784" alt="image" src="https://github.com/user-attachments/assets/a27b980f-854d-4b7d-a92f-966311015385" />
+<img width="1004" height="785" alt="image" src="https://github.com/user-attachments/assets/fbee7600-e152-4813-9d9c-00bd3d9673af" />
+
+
 
 ---
 
