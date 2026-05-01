@@ -7,9 +7,17 @@ public:
     float speed;
     float turnSpeed;
 
+
+
     // Walk animation (set by update, read by draw — no logic change)
     float walkTimer;
     bool  isWalking;
+
+    float velocityY;
+    float gravity;
+    float jumpForce;
+    bool isGrounded;
+
 
     Player(); // Constructor
     void update(bool keys[]);

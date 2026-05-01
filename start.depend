@@ -1,13 +1,15 @@
 # depslib dependency file v1.0
-1777652790 source:c:\users\omar3\documents\sections graphics\start\main.cpp
+1777669601 source:c:\users\omar3\documents\sections graphics\start\main.cpp
 	<GL/freeglut.h>
 	"GameManager.h"
 	<string>
+	<cstdio>
+	<windows.h>
 
 1777492274 c:\program files\codeblocks\mingw\include\gl\glut.h
 	"freeglut_std.h"
 
-1777657892 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
+1777492274 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
 	<windows.h>
 	<EGL/egl.h>
 	<GLES/gl.h>
@@ -18,34 +20,34 @@
 	<GL/glu.h>
 	<stdlib.h>
 
-1777657892 c:\program files\codeblocks\mingw\include\gl\freeglut.h
+1777492274 c:\program files\codeblocks\mingw\include\gl\freeglut.h
 	"freeglut_std.h"
 	"freeglut_ext.h"
 
-1777657892 c:\program files\codeblocks\mingw\include\gl\freeglut_ext.h
+1777492274 c:\program files\codeblocks\mingw\include\gl\freeglut_ext.h
 	<stdarg.h>
 
-1777500245 source:c:\users\omar3\documents\sections graphics\start\src\player.cpp
+1777671095 source:c:\users\omar3\documents\sections graphics\start\src\player.cpp
 	"Player.h"
 	<GL/freeglut.h>
 	<cmath>
 
-1777500245 c:\users\omar3\documents\sections graphics\start\include\player.h
+1777670619 c:\users\omar3\documents\sections graphics\start\include\player.h
 
-1777500245 source:c:\users\omar3\documents\sections graphics\start\src\target.cpp
+1777667274 source:c:\users\omar3\documents\sections graphics\start\src\target.cpp
 	"Target.h"
 	<GL/freeglut.h>
 	<cstdlib>
 	<cmath>
 
-1777500245 c:\users\omar3\documents\sections graphics\start\include\target.h
+1777667274 c:\users\omar3\documents\sections graphics\start\include\target.h
 
-1777654499 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
+1777670546 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
 	<GL/freeglut.h>
 	"Player.h"
 	"Target.h"
 
-1777654968 source:c:\users\omar3\documents\sections graphics\start\src\gamemanager.cpp
+1777670546 source:c:\users\omar3\documents\sections graphics\start\src\gamemanager.cpp
 	"GameManager.h"
 	<GL/freeglut.h>
 	<cmath>
@@ -123,4 +125,6 @@
 	<GL/freeglut.h>
 	<cstdlib>
 	<cmath>
+
+1777667274 c:\users\omar3\documents\sections graphics\start\include\charmod.h
 

@@ -14,6 +14,11 @@ Player::Player() {
     turnSpeed = 3.0f;
     walkTimer = 0.0f;
     isWalking = false;
+    velocityY = 0.0f;
+    gravity = -0.015f;
+    jumpForce = 0.3f;
+    isGrounded = true;
+    y = 0.0f; // start on ground
 }
 
 // -------------------------------------------------------
@@ -39,6 +44,23 @@ void Player::update(bool keys[]) {
 
     if (isWalking) walkTimer += 0.18f;
     else           walkTimer  = 0.0f;
+
+    // JUMP
+    if (keys[32] && isGrounded) {
+        velocityY = jumpForce;
+        isGrounded = false;
+    }
+
+    velocityY += gravity;
+    y += velocityY;
+
+
+    if (y <= 0.0f) {
+        y = 0.0f;
+        velocityY = 0.0f;
+        isGrounded = true;
+    }
+
 
     // -------------------------------------------------------
     //  INVISIBLE WALLS — clamp player inside the world boundary.
@@ -208,8 +230,8 @@ void Player::draw() {
     // AK-47 — chest height, pointing forward (+Z)
     // ================================================
     glPushMatrix();
-        glTranslatef(0.08f, 0.88f + bob, 0.26f);
-        glRotatef(-8.0f, 1,0,0); // slight downward tilt
+        glTranslatef(0.08f, 0.70f + bob, 0.35f);
+        glRotatef(-8.0f, 1,0,0);
 
         auto gunMetal  = []{ glColor3f(0.22f, 0.22f, 0.22f); };
         auto gunWood   = []{ glColor3f(0.45f, 0.25f, 0.08f); };
