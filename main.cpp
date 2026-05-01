@@ -34,6 +34,9 @@ void keyboard(unsigned char key, int x, int y) {
 
     game.handleMenuInput(key);
 
+    if (key == 'f' || key == 'F') game.cameraDistance = 0.0f; // First person
+    if (key == 'g' || key == 'G') game.cameraDistance = 6.0f; // Third person
+
     cheatBuffer += key;
     if (cheatBuffer.length() > 4) {
         cheatBuffer.erase(0, 1);

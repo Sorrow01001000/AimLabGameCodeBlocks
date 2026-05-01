@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1777669601 source:c:\users\omar3\documents\sections graphics\start\main.cpp
+1777671911 source:c:\users\omar3\documents\sections graphics\start\main.cpp
 	<GL/freeglut.h>
 	"GameManager.h"
 	<string>
@@ -42,7 +42,7 @@
 
 1777667274 c:\users\omar3\documents\sections graphics\start\include\target.h
 
-1777670546 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
+1777671911 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
 	<GL/freeglut.h>
 	"Player.h"
 	"Target.h"

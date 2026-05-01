@@ -18,6 +18,9 @@ enum GameState {
 
 class GameManager {
 public:
+
+    float cameraDistance;
+
     GameState currentState;
     Player player;
     Target targets[MAX_TARGETS];

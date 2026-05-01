@@ -18,6 +18,7 @@ GameManager::GameManager() {
     isShooting = false;
     beamTimer = 0;
     cheatActivated = false;
+    cameraDistance = 6.0f;
 }
 
 void GameManager::init() {
@@ -374,7 +375,7 @@ void GameManager::draw() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
         drawText(w / 2.0f - 70.0f, h / 2.0f + 80.0f, "HOW TO PLAY:");
-        drawText(w / 2.0f - 120.0f, h / 2.0f + 40.0f, "- Use W, A, S, D to move.");
+        drawText(w / 2.0f - 120.0f, h / 2.0f + 40.0f, "- Use W, A, S, D to move, Space to Jump");
         drawText(w / 2.0f - 120.0f, h / 2.0f + 10.0f, "- Mouse aim, Left Click to shoot.");
         drawText(w / 2.0f - 120.0f, h / 2.0f - 20.0f, "- Destroy all targets before time runs out!");
         drawText(w / 2.0f - 120.0f, h / 2.0f - 50.0f, "- Secret: Type 'boom' for MADNESS MODE.");
@@ -385,7 +386,8 @@ void GameManager::draw() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
 
-        float cameraDistance = 0.0f;
+
+        float cameraDistance = this->cameraDistance;
         float cameraHeight = 3.0f;
         float rad = player.rotation * (3.14159f / 180.0f);
         float camX = player.x - sin(rad) * cameraDistance;
