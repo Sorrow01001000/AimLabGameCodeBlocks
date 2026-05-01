@@ -79,6 +79,7 @@ int main(int argc, char** argv) {
     glutInitWindowSize(800, 600);
     glutCreateWindow("Beam of Madness");
 
+    game.init();
     // Enable 3D depth testing
     glEnable(GL_DEPTH_TEST);
 

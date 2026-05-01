@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1777650376 source:c:\users\omar3\documents\sections graphics\start\main.cpp
+1777652790 source:c:\users\omar3\documents\sections graphics\start\main.cpp
 	<GL/freeglut.h>
 	"GameManager.h"
 	<string>
@@ -40,11 +40,12 @@
 
 1777500245 c:\users\omar3\documents\sections graphics\start\include\target.h
 
-1777650220 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
+1777654499 c:\users\omar3\documents\sections graphics\start\include\gamemanager.h
+	<GL/freeglut.h>
 	"Player.h"
 	"Target.h"
 
-1777650823 source:c:\users\omar3\documents\sections graphics\start\src\gamemanager.cpp
+1777654968 source:c:\users\omar3\documents\sections graphics\start\src\gamemanager.cpp
 	"GameManager.h"
 	<GL/freeglut.h>
 	<cmath>
@@ -52,4 +53,22 @@
 	<cstdlib>
 	<windows.h>
 	<mmsystem.h>
+	"stb_image.h"
+
+1777428192 c:\users\omar3\documents\sections graphics\start\include\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
 

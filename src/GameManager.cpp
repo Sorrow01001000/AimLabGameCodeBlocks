@@ -6,6 +6,9 @@
 #include <windows.h>
 #include <mmsystem.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #pragma comment(lib, "winmm.lib")
 
 GameManager::GameManager() {
@@ -15,6 +18,19 @@ GameManager::GameManager() {
     isShooting = false;
     beamTimer = 0;
     cheatActivated = false;
+}
+
+void GameManager::init() {
+
+    groundTexture = loadTexture("C:\\Users\\omar3\\Documents\\sections graphics\\start\\grassfield.jpg");
+    skyTexture = loadTexture("C:\\Users\\omar3\\Documents\\sections graphics\\start\\brickwall.jpg");
+
+    treePositions[0][0] = -20.0f; treePositions[0][1] = -20.0f;
+    treePositions[1][0] =  15.0f; treePositions[1][1] = -25.0f;
+    treePositions[2][0] = -30.0f; treePositions[2][1] =  15.0f;
+    treePositions[3][0] =  25.0f; treePositions[3][1] =  20.0f;
+    treePositions[4][0] =   0.0f; treePositions[4][1] = -35.0f;
+    treePositions[5][0] = -10.0f; treePositions[5][1] =  30.0f;
 }
 
 void GameManager::handleMenuInput(unsigned char key) {
@@ -94,6 +110,16 @@ void GameManager::initLevel2() {
 void GameManager::update(bool keys[]) {
     if (currentState == LEVEL_1 || currentState == LEVEL_2) {
         player.update(keys);
+
+        float time = glutGet(GLUT_ELAPSED_TIME) * 0.003f;
+
+        for (int i = 0; i < MAX_TARGETS; i++) {
+            if (targets[i].active) {
+                // By adding 'i', every target bobs at a slightly different time
+                // instead of all of them moving in perfect, boring synchronization!
+                targets[i].y += sin(time + i) * 0.02f;
+            }
+        }
 
         if (beamTimer > 0) {
             beamTimer--;
@@ -214,20 +240,137 @@ void GameManager::drawText(float x, float y, const char* text) {
 
 void GameManager::drawGround() {
     if (cheatActivated) {
+        glDisable(GL_TEXTURE_2D); // Turn off the image to flash colors!
         float r = (rand() % 100) / 100.0f;
         float g = (rand() % 100) / 100.0f;
         float b = (rand() % 100) / 100.0f;
         glColor3f(r, g, b);
     } else {
-        glColor3f(0.3f, 0.8f, 0.3f);
+        glColor3f(1.0f, 1.0f, 1.0f); // Set color to white so the image colors stay normal
+        glEnable(GL_TEXTURE_2D);     // Turn ON the image
+        glBindTexture(GL_TEXTURE_2D, groundTexture);
     }
 
     glBegin(GL_QUADS);
-        glVertex3f(-50.0f, 0.0f, -50.0f);
-        glVertex3f(-50.0f, 0.0f,  50.0f);
-        glVertex3f( 50.0f, 0.0f,  50.0f);
-        glVertex3f( 50.0f, 0.0f, -50.0f);
+        // The first 2 numbers are the image coordinates, the last 3 are the 3D world coordinates
+        // We use 10.0f to make the image tile/repeat 10 times so it doesn't look stretched!
+        glTexCoord2f(0.0f,  0.0f);  glVertex3f(-50.0f, 0.0f, -50.0f);
+        glTexCoord2f(0.0f,  10.0f); glVertex3f(-50.0f, 0.0f,  50.0f);
+        glTexCoord2f(10.0f, 10.0f); glVertex3f( 50.0f, 0.0f,  50.0f);
+        glTexCoord2f(10.0f, 0.0f);  glVertex3f( 50.0f, 0.0f, -50.0f);
     glEnd();
+
+    glDisable(GL_TEXTURE_2D); // Turn it back off so our targets and player don't look like grass!
+}
+
+void GameManager::drawSky() {
+    if (!cheatActivated) {
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, skyTexture);
+    }
+
+    float s = 50.0f; // Size of the world
+    float t = 3.0f;  // <--- THE MAGIC FIX! Tiles the image 3 times so it stays crisp!
+
+    glBegin(GL_QUADS);
+        // BACK WALL
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-s,  0.0f, -s);
+        glTexCoord2f(t,    0.0f); glVertex3f( s,  0.0f, -s);
+        glTexCoord2f(t,    t);    glVertex3f( s,   s,   -s);
+        glTexCoord2f(0.0f, t);    glVertex3f(-s,   s,   -s);
+
+        // FRONT WALL
+        glTexCoord2f(0.0f, 0.0f); glVertex3f( s,  0.0f,  s);
+        glTexCoord2f(t,    0.0f); glVertex3f(-s,  0.0f,  s);
+        glTexCoord2f(t,    t);    glVertex3f(-s,   s,    s);
+        glTexCoord2f(0.0f, t);    glVertex3f( s,   s,    s);
+
+        // LEFT WALL
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-s,  0.0f,  s);
+        glTexCoord2f(t,    0.0f); glVertex3f(-s,  0.0f, -s);
+        glTexCoord2f(t,    t);    glVertex3f(-s,   s,   -s);
+        glTexCoord2f(0.0f, t);    glVertex3f(-s,   s,    s);
+
+        // RIGHT WALL
+        glTexCoord2f(0.0f, 0.0f); glVertex3f( s,  0.0f, -s);
+        glTexCoord2f(t,    0.0f); glVertex3f( s,  0.0f,  s);
+        glTexCoord2f(t,    t);    glVertex3f( s,   s,    s);
+        glTexCoord2f(0.0f, t);    glVertex3f( s,   s,   -s);
+
+        // CEILING
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-s,   s,   -s);
+        glTexCoord2f(t,    0.0f); glVertex3f( s,   s,   -s);
+        glTexCoord2f(t,    t);    glVertex3f( s,   s,    s);
+        glTexCoord2f(0.0f, t);    glVertex3f(-s,   s,    s);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+void GameManager::drawTree(float x, float z) {
+    glPushMatrix();
+        // 1. Move to the specific spot on the map
+        glTranslatef(x, 0.0f, z);
+
+        // Turn OFF textures to make sure they don't accidentally wrap around the trees
+        glDisable(GL_TEXTURE_2D);
+
+      // 2. Draw Trunk (Brown)
+        glColor3f(0.4f, 0.2f, 0.0f);
+        glPushMatrix();
+            glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+            // Made it thinner (0.8) and shorter (2.0)
+            glutSolidCylinder(0.8f, 2.0f, 15, 15);
+        glPopMatrix();
+
+        // 3. Draw Leaves (Green Pinecone shape)
+        glColor3f(0.0f, 0.5f, 0.1f);
+        glPushMatrix();
+            // Only move up 2.0 to sit on top of the shorter trunk
+            glTranslatef(0.0f, 2.0f, 0.0f);
+            glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+            // Smaller cone (width 2.5, height 4.0)
+            glutSolidCone(2.5f, 4.0f, 15, 15);
+        glPopMatrix();
+
+        // ONLY reset the color, DO NOT enable textures here!
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+    glPopMatrix();
+}
+GLuint GameManager::loadTexture(const char* filename) {
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // How the texture repeats and scales
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // Use GL_NEAREST for a pixelated retro look, or GL_LINEAR for smooth
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // OpenGL expects the 0.0 coordinate on the Y-axis to be at the bottom, so we flip it
+    stbi_set_flip_vertically_on_load(true);
+
+    int width, height, nrChannels;
+    // Actually load the image file
+    unsigned char *data = stbi_load(filename, &width, &height, &nrChannels, 0);
+
+    if (data) {
+        // Check if the image has an alpha channel (transparency) like a PNG, or just RGB like a JPG
+        GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
+
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    } else {
+        printf("Failed to load texture: %s\n", filename);
+    }
+
+    // Free the image from RAM now that it's on the graphics card
+    stbi_image_free(data);
+
+    return textureID;
 }
 
 void GameManager::draw() {
@@ -284,6 +427,12 @@ void GameManager::draw() {
         gluLookAt(camX, camY, camZ, lookX, player.y, lookZ, 0.0f, 1.0f, 0.0f);
 
         drawGround();
+        drawSky();
+
+        for (int i = 0; i < 6; i++) {
+            drawTree(treePositions[i][0], treePositions[i][1]);
+        }
+
         for (int i = 0; i < MAX_TARGETS; i++) targets[i].draw();
         player.draw();
 

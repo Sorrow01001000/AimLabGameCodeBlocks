@@ -1,4 +1,5 @@
 #pragma once
+#include <GL/freeglut.h>
 #include "Player.h"
 #include "Target.h"
 
@@ -20,6 +21,12 @@ public:
     GameState currentState;
     Player player;
     Target targets[MAX_TARGETS];
+    GLuint groundTexture;
+    GLuint skyTexture;
+    GLuint loadTexture(const char* filename);
+
+    float treePositions[6][2];
+    void drawTree(float x, float z);
 
     int score;
     float timeLeft;
@@ -34,7 +41,7 @@ public:
     bool cheatActivated;
 
     GameManager(); // Constructor
-
+    void init();
     // Game loop functions
     void initLevel1();
     void initLevel2();
@@ -43,7 +50,9 @@ public:
     void shoot();
     void handleMenuInput(unsigned char key);
 
+
     // Helper drawing functions
     void drawText(float x, float y, const char* text);
     void drawGround();
+    void drawSky();
 };
