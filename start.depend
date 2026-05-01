@@ -7,7 +7,7 @@
 1777492274 c:\program files\codeblocks\mingw\include\gl\glut.h
 	"freeglut_std.h"
 
-1777492274 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
+1777657892 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
 	<windows.h>
 	<EGL/egl.h>
 	<GLES/gl.h>
@@ -18,11 +18,11 @@
 	<GL/glu.h>
 	<stdlib.h>
 
-1777492274 c:\program files\codeblocks\mingw\include\gl\freeglut.h
+1777657892 c:\program files\codeblocks\mingw\include\gl\freeglut.h
 	"freeglut_std.h"
 	"freeglut_ext.h"
 
-1777492274 c:\program files\codeblocks\mingw\include\gl\freeglut_ext.h
+1777657892 c:\program files\codeblocks\mingw\include\gl\freeglut_ext.h
 	<stdarg.h>
 
 1777500245 source:c:\users\omar3\documents\sections graphics\start\src\player.cpp
@@ -71,4 +71,56 @@
 	<emmintrin.h>
 	<intrin.h>
 	<arm_neon.h>
+
+1777665688 source:c:\graphics\aimlabgamecodeblocks\main.cpp
+	<GL/freeglut.h>
+	"GameManager.h"
+	<string>
+
+1777664027 c:\graphics\aimlabgamecodeblocks\include\gamemanager.h
+	<GL/freeglut.h>
+	"Player.h"
+	"Target.h"
+
+1777665524 c:\graphics\aimlabgamecodeblocks\include\player.h
+
+1777666295 c:\graphics\aimlabgamecodeblocks\include\target.h
+
+1777666402 source:c:\graphics\aimlabgamecodeblocks\src\gamemanager.cpp
+	"GameManager.h"
+	<GL/freeglut.h>
+	<cmath>
+	<cstdio>
+	<cstdlib>
+	<windows.h>
+	<mmsystem.h>
+	"stb_image.h"
+
+1777655928 c:\graphics\aimlabgamecodeblocks\include\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1777665884 source:c:\graphics\aimlabgamecodeblocks\src\player.cpp
+	"Player.h"
+	<GL/freeglut.h>
+	<cmath>
+
+1777666295 source:c:\graphics\aimlabgamecodeblocks\src\target.cpp
+	"Target.h"
+	<GL/freeglut.h>
+	<cstdlib>
+	<cmath>
 

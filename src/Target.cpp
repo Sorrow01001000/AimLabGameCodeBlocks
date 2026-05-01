@@ -16,6 +16,7 @@ void Target::spawn() {
     if (std::abs(x) < 5.0f) x += 10.0f;
     if (std::abs(z) < 5.0f) z += 10.0f;
 
+    spawnX = x;  // remember the starting X for the slide animation
     active = true;
 }
 

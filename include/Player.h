@@ -7,7 +7,15 @@ public:
     float speed;
     float turnSpeed;
 
+    // Walk animation (set by update, read by draw — no logic change)
+    float walkTimer;
+    bool  isWalking;
+
     Player(); // Constructor
     void update(bool keys[]);
     void draw();
+
+private:
+    // Helper: draw a solid sphere approximated with glutSolidSphere
+    void drawLimb(float sx, float sy, float sz) const;
 };

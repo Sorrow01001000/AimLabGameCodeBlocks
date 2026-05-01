@@ -22,8 +22,8 @@ GameManager::GameManager() {
 
 void GameManager::init() {
 
-    groundTexture = loadTexture("C:\\Users\\omar3\\Documents\\sections graphics\\start\\grassfield.jpg");
-    skyTexture = loadTexture("C:\\Users\\omar3\\Documents\\sections graphics\\start\\brickwall.jpg");
+    groundTexture = loadTexture("C:\\graphics\\AimLabGameCodeBlocks\\grassfield.jpg");
+    skyTexture = loadTexture("C:\\graphics\\AimLabGameCodeBlocks\\sky.jpg");
 
     treePositions[0][0] = -20.0f; treePositions[0][1] = -20.0f;
     treePositions[1][0] =  15.0f; treePositions[1][1] = -25.0f;
@@ -115,9 +115,14 @@ void GameManager::update(bool keys[]) {
 
         for (int i = 0; i < MAX_TARGETS; i++) {
             if (targets[i].active) {
-                // By adding 'i', every target bobs at a slightly different time
-                // instead of all of them moving in perfect, boring synchronization!
+                // Up-down bob (original behaviour kept)
                 targets[i].y += sin(time + i) * 0.02f;
+
+                // Left-right slide: each target has its own speed and phase
+                // so they all move independently. Swings ±4 units side to side.
+                float slideSpeed = 0.6f + (i % 3) * 0.25f; // 0.6, 0.85, or 1.1
+                float slideRange = 4.0f;
+                targets[i].x = targets[i].spawnX + sin(time * slideSpeed + i * 1.3f) * slideRange;
             }
         }
 

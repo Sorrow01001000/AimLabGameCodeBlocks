@@ -40,6 +40,9 @@ public:
     // --- NEW: Cheat Code Variable ---
     bool cheatActivated;
 
+    // --- Invertible Map ---
+    bool mapInverted;
+
     GameManager(); // Constructor
     void init();
     // Game loop functions
